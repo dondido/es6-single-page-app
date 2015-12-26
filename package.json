@@ -1,0 +1,61 @@
+{
+  "name": "es6-single-page-app",
+  "version": "1.0.0",
+  "description": "ES6 single page application boilerplate that provides a good starting point for new projects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ES6",
+    "spa",
+    "single",
+    "page",
+    "application",
+    "ecmascipt",
+    "module",
+    "loader",
+    "lazy",
+    "loading",
+    "login",
+    "javascript"
+  ],
+  "author": "Dian Dimitrov",
+  "license": "MIT",
+  "dependencies": {
+    "babel": "^6.1.18",
+    "body-parser": "^1.14.1",
+    "compression": "^1.6.0",
+    "connect-mongo": "^0.8.2",
+    "cookie-parser": "^1.4.0",
+    "csurf": "^1.8.3",
+    "express": "^4.13.3",
+    "express-es6-template-engine": "^1.0.8",
+    "express-mailer": "^0.3.0",
+    "express-session": "^1.12.1",
+    "merge": "^1.2.0",
+    "mongodb": "^2.0.48",
+    "mongoose": "^4.2.6",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^3.1.0",
+    "serve-favicon": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.1.18",
+    "jspm": "^0.16.14"
+  },
+  "jspm": {
+    "directories": {
+      "baseURL": "src"
+    },
+    "dependencies": {
+      "text": "github:systemjs/plugin-text@^0.0.3"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    }
+  }
+}

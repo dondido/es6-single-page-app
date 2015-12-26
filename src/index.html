@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>SPA</title>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+<body>
+    <h1 class="app-title">ES6 Single Page Application</h1>
+    <main class="main">${main}</main>
+    <script src="jspm_packages/system.js"></script>
+    <script src="config.js"></script>
+    <script>System.import('index').then(function(m) {
+    console.log(111, m);
+  });</script>
+</body>
+</html>

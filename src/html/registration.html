@@ -1,0 +1,25 @@
+<form action="/register" method="POST" id="sign-up-form" class="panel form-panel">
+    <h2>Please sign up</h2>
+    <div class="form-field-group">
+        <input type="hidden" name="_csrf" value="${token}">
+        <div class="text-input">
+            <input class="form-field" type="text" name="fullname" required>
+            <span class="input-bar"></span>
+            <label class="input-label">Full name</label>
+        </div>
+        <div class="text-input">
+            <input class="form-field" type="email" name="email" required>
+            <span class="input-bar"></span>
+            <label class="input-label">Email</label>
+        </div>
+        <div class="text-input">
+            <input class="form-field" type="password" name="password" required>
+            <span class="input-bar"></span>
+            <label class="input-label">Password</label>
+        </div>
+        <button type="submit">Sign me up!</button>
+    </div>
+    <div class="forgot">
+        Already a member? <a href="/">Sign In Here</a>
+    </div>
+</form>
