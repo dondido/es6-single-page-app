@@ -2,16 +2,16 @@ import {$http} from 'js/$http.js';
 class Router {
   getFile(page) {
     if (page && page.file) {
-      if(page.file.split('.').pop() === 'html') {
-        System.import(page.file + '!text').then(m => this.updateContent(m));
+      if(page.file.slice(-4) === 'html') {
+        updateContent(page.file);
       }
       else {
         System.import(page.file).then(m => m.init && m.init());
       }
     }
   }
-  updateContent(m) {
-    this.$main.innerHTML = m;
+  updateContent(f) {
+    System.import(f + '!text').then(m => this.$main.innerHTML = m);
   }
   /* Sometimes we have a hyperlink that needs to be a hyperlink but we don’t want it
   to process and open the link but only call a javascript function. Fortunately here
@@ -39,23 +39,23 @@ class Router {
     } while(el = el.parentNode);
   }
   getRoute(path) {
-    console.log(path)
     return path === '/' ? '/' : path.replace(/\//g, '');
   }
-  handleRouteChange(ready) {
+  handleRouteChange(first) {
     var page;
-    if (ready) {
-      history.replaceState({url: location.pathname}, document.title, location.pathname);
+    console.log(110, history.state)
+    if (first) {
+      history.replaceState({url: location.pathname, first: 1}, document.title, location.pathname);
+      console.log(112, history.state)
     }
-    else {
-      page = this.routes[this.getRoute(history.state.url)];
-    }
-    console.log(112, page)
+    page = this.routes[this.getRoute(history.state.url)];
+    
     if (page && page.file) {
-      this.getFile(page);  
+      this.getFile(page);
     }
   }
   init() {
+    console.log(109, history.state)
     var success = routes => {
         this.routes = JSON.parse(routes);
         this.handleRouteChange(1);

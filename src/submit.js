@@ -14,15 +14,17 @@ class Submitter {
         }
       }
     });
+    console.log(113, f.action);
     $http({
       method: 'POST', 
       url: f.action,
       params: formData.slice(0, -1)
-    }).then((r) => this.successCallback(r), (r) => this.errorCallback(r));
+    }).then(r => this.successCallback(r), r => this.errorCallback(r));
   }
   updateListener(successCallback, errorCallback) {
     this.successCallback = successCallback;
     this.errorCallback = errorCallback;
+    console.log(115, document.forms[0]);
     document.forms[0].addEventListener('submit', (e) => this.handleSubmit(e))
   }
 }

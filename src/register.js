@@ -1,17 +1,16 @@
-import registration from 'html/registration.html!text';
-import Submitter from 'submit.js';
 import Router from 'router.js';
-import User from 'js/user.js';
+import Submitter from 'submit.js';
 var login = function(res) {
-    User.fullName = JSON.parse(res).fullName;
-    System.import('account').then(m => m.init());
+    Router.updateContent('html/account.html');
     history.pushState({url: '/'}, '', '/');
   }, 
   reject = function() {
     console.log('reject')
   },
   init = function() {
-    Router.updateContent(registration);
+    if(history.length > 1) {
+      Router.updateContent('html/registration.html');
+    }
     Submitter.updateListener(login, reject);
   };
 export var init;

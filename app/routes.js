@@ -52,44 +52,7 @@ module.exports = function (app, passport, Account) {
         res.sendFile(path.join(__dirname + '/../src/index.html'))
     });*/
     // route to handle all app requests
-    app.use(function(req, res, next){
-        var dict,
-            path = req.path === '/' ? '/' : req.path.replace(/\//g, '');
-        console.log(110, path, req.csrfToken(), req.isAuthenticated(), req.user)
-        if(routes[path]) {
-            // if (req.xhr) {
-            //     if ('registration' === path) {
-            //         re
-            //     }
-            // }
-            if('/' === path) {
-                /*titleTpl = '${engineName} - The fastest javascript template string engine!',
-                cb = (err, content) => {return err || content},
-                compiledTitle = es6Renderer(titleTpl, {locals:{engineName: 'ES6 Renderer'}, template: true}, cb);*/
-                if(req.isAuthenticated()) {
-                    dict = {
-                        locals: {username: req.user.username},
-                        partials: {main: 'src/html/account.html'}
-                    };
-                }
-                else {
-                    dict = {
-                        locals: {token: req.csrfToken()},
-                        partials: {main: 'src/html/login.html'}
-                    }
-                }
-            }
-            else if ('registration' === path) {
-                dict = {
-                    locals: {token: req.csrfToken()},
-                    partials: {main: 'src/html/registration.html'}
-                };   
-            }
-            return res.render('index', dict);
-            //return res.sendFile(path.join(__dirname + '/../src/index.html'))
-        }
-        next();
-    });
+    
 
     /*function(err, req, res, next){
    
@@ -137,12 +100,7 @@ module.exports = function (app, passport, Account) {
             again after restarting the browser. */
             req.session.cookie.expires = false;
         }
-        res.json(
-            {
-                fullName: req.user.username,
-                token: req.csrfToken()
-            }
-        )
+        res.send('');
     });
 
     app.post('/logout', function(req, res) {
@@ -216,5 +174,44 @@ module.exports = function (app, passport, Account) {
                 }
             );
         }
+    });
+
+    app.use(function(req, res, next){
+        var dict,
+            path = req.path === '/' ? '/' : req.path.replace(/\//g, '');
+        console.log(110, path, req.csrfToken(), req.isAuthenticated(), req.user)
+        if(routes[path]) {
+            if (req.xhr) {
+                 if ('htmlaccount.html' === path) {
+                    //re
+                 }
+            }
+            if('/' === path) {
+                /*titleTpl = '${engineName} - The fastest javascript template string engine!',
+                cb = (err, content) => {return err || content},
+                compiledTitle = es6Renderer(titleTpl, {locals:{engineName: 'ES6 Renderer'}, template: true}, cb);*/
+                if(req.isAuthenticated()) {
+                    dict = {
+                        locals: {username: req.user.username},
+                        partials: {main: 'src/html/account.html'}
+                    };
+                }
+                else {
+                    dict = {
+                        locals: {token: req.csrfToken()},
+                        partials: {main: 'src/html/login.html'}
+                    }
+                }
+            }
+            else if ('registration' === path) {
+                dict = {
+                    locals: {token: req.csrfToken()},
+                    partials: {main: 'src/html/registration.html'}
+                };   
+            }
+            return res.render('index', dict);
+            //return res.sendFile(path.join(__dirname + '/../src/index.html'))
+        }
+        next();
     });
 };
