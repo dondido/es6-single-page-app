@@ -9,14 +9,22 @@
 .app-title {
     color: #5264AE;
 }
-.form-field-group {
+.form {
     width: 300px;
+}
+.warning {
+    display: none;
+}
+.error > .warning {
+    display: block;
+    color: tomato;
+    margin-bottom: 2ex;
 }
 button {
     display: inline-block;
     border: 1px solid black;
     background: transparent;
-    margin: 2ex auto 4ex;
+    margin: 4ex auto;
     padding: 1.5ex 2em;
     font-size: 1em;
     cursor: pointer;
@@ -36,7 +44,7 @@ button {
     display: block;
     position: relative;
     cursor: pointer;
-    margin: 5ex auto 4ex;
+    margin: 5ex auto 0;
 }
 .custom-checkbox-label:before {
     content: '';

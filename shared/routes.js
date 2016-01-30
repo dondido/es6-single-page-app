@@ -1,12 +1,15 @@
 var routes = {
   '/': {
-    file: 'root'
+    file: 'html/account.html'
   },
   account: {
     file: 'html/account.html'
   },
-  'forgot-password': {
+  'forgotten-password': {
     file: 'html/forgot-password.html'
+  },
+  'reset-forgotten': {
+    file: 'html/reset-forgotten.html'
   },
   'registration': {
     file: 'register'

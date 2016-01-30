@@ -1,12 +1,18 @@
 {
     "/": {
-        "file": "root"
-    },
-    "account": {
         "file": "html/account.html"
     },
-    "forgot-password": {
-        "file": "html/forgot-password.html"
+    "forgotten-password": {
+        "file": "html/forgotten-password.html"
+    },
+    "reset-password": {
+        "file": "reset-password"
+    },
+    "update-password": {
+        "file": "update-password"
+    },
+    "check-email": {
+        "file": "html/check-email.html"
     },
     "registration": {
         "file": "register"

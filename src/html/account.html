@@ -1,1 +1,6 @@
 <p id="account">Hello ${username}</p>
+<a href="update-password">Update Password</a>
+<form action="/logout" method="POST">
+  <input type="hidden" name="_csrf" value="${token}">
+  <button type="submit">Logout</button>
+</form>

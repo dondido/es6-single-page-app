@@ -2,11 +2,12 @@ export var $http = function(data) {
     return new Promise(function(resolve, reject) {
         var req = new XMLHttpRequest();
         req.open(data.method, data.url);
-        req.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=UTF-8');
+        req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        req.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        //req.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=UTF-8');
         req.onload = function() {
             // This is called even on 404 etc
             // so check the status
-            console.log(data, req)
             if (req.status === 200) {
                 // Resolve the promise with the response text
                 resolve(req.response);
@@ -22,6 +23,6 @@ export var $http = function(data) {
             reject(Error('Network Error'));
         };
         // Make the request
-        req.send(data.params);
+        req.send(JSON.stringify(data.params));
     });
 }

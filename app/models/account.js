@@ -14,13 +14,14 @@ var Account = new Schema({
 });
 
 Account.plugin(passportLocalMongoose, {usernameField: 'email'});
+//documentation can be found here https://www.npmjs.com/package/mongoose-token
+Account.plugin(require('mongoose-token'));
 
-Account.statics.updatePassword = function(user, password, cb) {
-
+Account.methods.updatePassword = function(password, cb) {
     /* This instance method resets forgotten user password by invoking
     setPassword(password, cb) instance method to set a user's password
     hash and salt in the databease. */
-    user.setPassword(
+    this.setPassword(
         password,
         function(err, user){
             /* Using setPassword() will only update the document's password
@@ -32,10 +33,20 @@ Account.statics.updatePassword = function(user, password, cb) {
                 } else {
                     console.log('Password reset!');
                 }
-                cb();
+                cb && cb();
             });
         }
     );
+}
+ 
+Account.statics.resetPassword = function(token,  password, cb) {
+    this.getByToken(token).then(function(user) {
+        if (!user) {
+            return false;
+        }
+        user.updatePassword(password, cb);
+        user.resetToken();
+    });
 };
 
 module.exports = mongoose.model('Account', Account);

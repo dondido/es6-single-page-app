@@ -53,7 +53,11 @@ mongoose.connect(uristring, function (err, res) {
   console.log ('Succeeded connected to: ' + uristring);
   }
 });
-app.use(bodyParser.urlencoded({extended: false}));
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json());
 app.use(cookieParser());
 /* Secret to the session initialiser is provided, which adds a little 
 more security for our session data. Of course you might what to use a 
@@ -76,7 +80,9 @@ app.use(passport.session());
 
 app.use(csrf());
 // error handler for csrf tokens
-app.use(function (err, req, res, next) {
+/**/app.use(function (err, req, res, next) {
+    console.log(113, err.code, req.url, req.body);
+    //return;
     if (err.code !== 'EBADCSRFTOKEN') {
         return next(err);
     }

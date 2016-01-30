@@ -5,13 +5,11 @@
     <title>SPA</title>
     <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
-<body>
+<body data-account="${user}">
     <h1 class="app-title">ES6 Single Page Application</h1>
-    <main class="main">${main}</main>
+    <main id="main">${main}</main>
     <script src="jspm_packages/system.js"></script>
     <script src="config.js"></script>
-    <script>System.import('index').then(function(m) {
-    console.log(111, m);
-  });</script>
+    <script>System.import('index')</script>
 </body>
 </html>

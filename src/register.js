@@ -1,16 +1,8 @@
-import Router from 'router.js';
 import Submitter from 'submit.js';
-var login = function(res) {
-    Router.updateContent('html/account.html');
-    history.pushState({url: '/'}, '', '/');
-  }, 
-  reject = function() {
-    console.log('reject')
+var login = res => {
+    System.import('root').then(m => m.init());
+    history.pushState({url: res}, '', res)
   },
-  init = function() {
-    if(history.length > 1) {
-      Router.updateContent('html/registration.html');
-    }
-    Submitter.updateListener(login, reject);
-  };
+  updateAccount = res => Submitter.successDefault(res, login),
+  init = () => Submitter.init('html/registration.html!text', updateAccount, login);
 export var init;
