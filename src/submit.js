@@ -1,27 +1,32 @@
 import {$http} from 'js/$http.js';
 import Router from 'router.js';
 class Submitter {
-  handleSubmit(e) {
+  getFormData(e) {
     var f = e.target,
       formInputs = f.elements,
       formData = {};
-    e.preventDefault();
-    // for ... of ... can't iterate through a nodelist in chrome
+      // for ... of ... can't iterate through a nodelist in chrome
     [].forEach.call(formInputs, function(d) {
-      if(d.name && d.value) {
+      if(d.name && d.name !== '_csrf' && d.value) {
         let v = d.type === 'checkbox' || d.type === 'radio' ? (d.checked ? d.value : '') : d.value;
         if(v) {
           formData[d.name] = escape(v);
         }
       }
     });
+    return [f.action, formData];
+  }
+  handleSubmit(e) {
+    var [url, data] = this.getFormData(e);
+    e.preventDefault();
     $http({
       method: 'POST', 
-      url: f.action,
-      params: formData
+      url: url,
+      params: data
     }).then(r => this.successCallback(r), r => this.errorCallback(r));
   }
   successDefault(res, success, reject) {
+    console.log(115, res)
     var data;
     try {
       data = JSON.parse(res);
@@ -50,7 +55,6 @@ class Submitter {
   }
   init(path, update, login) {
     if(Router.xhr) {
-      console.log(111, path)
       System.import(path)
         .then( res => update ? update(res) : this.successDefault(res));
     }

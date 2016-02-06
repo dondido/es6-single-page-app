@@ -78,7 +78,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Important : csrf should be added after cookie and session initialization.
+// Otherwise you will get 'Error: misconfigured csrf'
 app.use(csrf());
+app.use(function(req, res, next) {
+  res.cookie('XSRF-TOKEN', req.csrfToken());
+  next();
+});
 // error handler for csrf tokens
 /**/app.use(function (err, req, res, next) {
     console.log(113, err.code, req.url, req.body);

@@ -124,14 +124,7 @@ module.exports = function (app, passport, Account) {
 
     /* Token key is generated and sent to the email address provided by the user. */
     app.post('/forgotten', function(req, res) {
-        var resolve = function() {
-            console.log(113)
-        };
-        var reject = function() {
-            console.log(114)
-        };
-        
-        Account.findByUsername(req.body.email, function(err, user) {
+        var setResetToken = function(err, user) {
             var sendEmail = function(model) {
                 app.mailer.send(
                     'html/email',
@@ -143,37 +136,16 @@ module.exports = function (app, passport, Account) {
                         }
                     },
                     function(err) {
-                        var emailstatus = 'submit-success';
                         if (err) {
-                          // handle error
                           console.log('There was an error sending the email', err);
-                          emailstatus = 'submit-fail';
-                        }
-                        console.log(122, req.body.email, req.body._csrf, Account.requestPasswordReset);
-                        if(req.xhr) {
-                            es6Renderer('src/html/check-email.html',
-                                {},
-                                function(err, content) {
-                                    if(err) {
-                                        return;
-                                    }
-                                    res.json({
-                                        html: {
-                                            main: content
-                                        }
-                                    });
-                                }
-                            );
-                        }
-                        else {
-                            res.redirect('/check-email');
                         }
                     });
             };
             //documentation can be found here https://www.npmjs.com/package/mongoose-token
             user.setToken().then(sendEmail);
-            
-        });
+        };
+        Account.findByUsername(req.body.email, setResetToken);
+        res.end();
     });
 
     /* Once the user has received the unique token, the token value needs to be
@@ -239,84 +211,6 @@ module.exports = function (app, passport, Account) {
     app.use(function(req, res, next){
         var dict,
             path = req.path === '/' ? '/' : req.path.replace(/\//g, '');
-        if('htmlaccount.html' === path) {
-            return res.render(
-                'html/' + (req.isAuthenticated() ? 'account' : 'login'), 
-                {
-                    locals: {
-                        token: req.csrfToken(),
-                        username: req.user && req.user.username
-                    }
-                }
-            );
-        }
-        console.log(110, path)
-        if('htmlregistration.html' === path) {
-            return res.render('html/registration', 
-                {
-                    locals: {
-                        token: req.csrfToken()
-                    }
-                }
-            );
-        }
-        if('htmlforgotten-password.html' === path) {
-            return res.render('html/forgotten-password', 
-                {
-                    locals: {
-                        token: req.csrfToken()
-                    }
-                }
-            );
-        }
-        if('htmlforgot-password.html' === path) {
-            return res.render('html/forgotten-password', 
-                {
-                    locals: {
-                        token: req.csrfToken()
-                    }
-                }
-            );
-        }
-        if('htmlreset-password.html' === path) {
-            return es6Renderer('src/html/reset-password.html',
-                {
-                    locals: {
-                        token: req.csrfToken()
-                    }
-                },
-                function(err, content) {
-                    if(err) {
-                        return;
-                    }
-                    res.json({
-                        html: {
-                            main: content
-                        }
-                    });
-                }
-            );
-        }
-        if('htmlupdate-password.html' === path) {
-            return es6Renderer('src/html/update-password.html',
-                {
-                    locals: {
-                        submitState: '',
-                        token: req.csrfToken()
-                    }
-                },
-                function(err, content) {
-                    if(err) {
-                        return;
-                    }
-                    res.json({
-                        html: {
-                            main: content
-                        }
-                    });
-                }
-            );  
-        }
         if('/' === path) {
             if(req.isAuthenticated()) {
                 dict = {
@@ -375,7 +269,6 @@ module.exports = function (app, passport, Account) {
             };   
         }
         if(dict) {
-            dict.locals.user = req.isAuthenticated() ? 1 : 0;
             return res.render('index', dict);
         }
         next();

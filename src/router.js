@@ -1,5 +1,6 @@
 import {$http} from 'js/$http.js';
 import Submitter from 'submit.js';
+import {$cookie} from 'js/$cookie.js';
 class Router {
   getFile(page) {
     if (page && page.file) {
@@ -24,11 +25,13 @@ class Router {
     instead, the event listener is added to one parent. That event listener analyses
     bubbled events to find a match on child elements. */
     do {
-      if (el.nodeName === 'A') {
+      if(el.nodeName === 'A') {
         let href = el.getAttribute('href');
-        let page = this.routes[href];
-        console.log(122, href, page)
-        if (page && page.file) {
+        let page = Object.assign({}, this.routes[href]);
+        if(page && page.file) {
+          if(page.account && !$cookie('username')) {
+            page.file = page.account;
+          }
           this.getFile(page);
           history.pushState({url: href}, page.file, href);
           e.preventDefault();
@@ -42,15 +45,15 @@ class Router {
   }
   handleRouteChange(first) {
     var path = location.pathname + location.search,
-      page = this.routes[this.getRoute(path)];
-    if(page.user && !Account.user) {
-      page = this.routes['/'];
-      history.replaceState({url: '/', first: 1}, document.title, '/');
-    }
-    else if(first) {
+      page = Object.assign({}, this.routes[this.getRoute(path)]);
+    if(first) {
       history.replaceState({url: path, first: 1}, document.title, path);
     }
     if(page && page.file) {
+      if(page.account && !$cookie('username')) {
+        page.file = page.account;
+        history.replaceState({url: '/', first: 1}, document.title, '/');
+      }
       this.getFile(page);
     }
   }

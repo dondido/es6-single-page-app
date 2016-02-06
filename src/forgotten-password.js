@@ -1,18 +1,26 @@
-/*import Submitter from 'submit.js';
+import {$http} from 'js/$http.js';
+import Submitter from 'submit.js';
 import Router from 'router.js';
-var login = res => {
-    System.import('root').then(m => m.init());
-    history.pushState(
-      {
-        url: location.pathname
-      },
-      'Forgotten Password',
-      location.pathname
-    );
+var sendEmail = e => {
+    var [url, data] = Submitter.getFormData(e);
+    e.preventDefault();
+    console.log(111, url, data)
+    $http({
+      method: 'POST', 
+      url: url,
+      params: data
+    });
+    System.import('html/check-email.html!text').then(res => Router.$main.innerHTML = res);
+    history.pushState({url: '/check-email'}, '', '/check-email');
   },
-  resetPassword = res => Submitter.successDefault(res, login),
-  submitEmail = res => Submitter.successDefault(res, resetPassword),
-  init = () => Submitter.init('html/forgotten-password.html!text', submitEmail, submitEmail);
-var submitEmail = res => Router.$main.innerHTML = res,
-  init = () => Submitter.init('html/forgotten-password.html!text', submitEmail, submitEmail);
-export var init;*/
+  submitForm = () => {
+    document.forms[0].addEventListener('submit', sendEmail);
+  },
+  renderForm = res => {
+    Router.$main.innerHTML = res;
+    submitForm();
+  },
+  init = () => Router.xhr ?
+      System.import('html/forgotten-password.html!text').then(renderForm) :
+      submitForm();
+export var init;
