@@ -53,39 +53,23 @@ module.exports = function (app, passport, Account) {
         );
     });
 
-    app.post('/account', passport.authenticate('local'), function(req, res) {
-        if (!req.body.remember){
-            /* Each session has a unique cookie object accompany it. This allows
-            us to alter the session cookie per visitor. We can set
-            req.session.cookie.expires to false to enable the cookie to remain
-            for only the duration of the user-agent. This user should log in
-            again after restarting the browser. */
-            req.session.cookie.expires = false;
-        }
-        if(req.xhr) {
-            es6Renderer('src/html/account.html',
-                {
-                    locals: {
-                        token: req.csrfToken(),
-                        username: req.user.username
-                    }
-                },
-                function(err, content) {
-                    if(err) {
-                        return;
-                    }
-                    res.json({
-                        user: 1,
-                        html: {
-                            main: content
-                        }
-                    });
-                }
-            );
-        }
-        else {
-            res.redirect('back');
-        }
+    app.post('/login', function(req, res, next) {
+        passport.authenticate('local', function(err, user, info) {
+            if (!user) {
+                return req.xhr ?
+                    res.json({path: '#login-error'}) : res.redirect('#login-error');
+            }
+            if (!req.body.remember){
+                /* Each session has a unique cookie object accompany it. This allows
+                us to alter the session cookie per visitor. We can set
+                req.session.cookie.expires to false to enable the cookie to remain
+                for only the duration of the user-agent. This user should log in
+                again after restarting the browser. */
+                req.session.cookie.expires = false;
+            }
+            res.cookie('username', user.username);
+            req.xhr ? res.json({path: '/'}) : res.redirect('back');
+        })(req, res, next);
     });
 
     app.post('/logout', function(req, res) {
@@ -94,32 +78,10 @@ module.exports = function (app, passport, Account) {
         logout() will remove the req.user property and clear the login session
         (if any). This however does not set req.session.cookie.expires to its
         default value so req.session.destroy needs to be invoked. */
-        if(req.xhr) {
-            es6Renderer('src/html/login.html',
-                {
-                    locals: {
-                        token: req.csrfToken(),
-                        username: req.user.username
-                    }
-                },
-                function(err, content) {
-                    if(err) {
-                        return;
-                    }
-                    res.json({
-                        user: 0,
-                        html: {
-                            main: content
-                        }
-                    });
-                }
-            );
-        }
-        else {
-            res.redirect('back');
-        }
+        res.clearCookie('username');
         req.logout();
         req.session.destroy();
+        req.xhr ? res.json({path: '/'}) : res.redirect('back');
     });
 
     /* Token key is generated and sent to the email address provided by the user. */
@@ -198,21 +160,22 @@ module.exports = function (app, passport, Account) {
                 }
             }
         }
+        console.log('reset', req.xhr)
         if(req.xhr) {
-            res.json({
-                path: '/'
-            });
+            res.end();
         }
         else {
-            res.redirect('/');
+            res.redirect('password-changed');
         }
     });
 
     app.use(function(req, res, next){
         var dict,
             path = req.path === '/' ? '/' : req.path.replace(/\//g, '');
+        console.log(111, path, req.isAuthenticated())
         if('/' === path) {
             if(req.isAuthenticated()) {
+                res.cookie('username', req.user.username);
                 dict = {
                     locals: {
                         token: req.csrfToken(),
@@ -251,10 +214,10 @@ module.exports = function (app, passport, Account) {
                 partials: {main: 'src/html/registration.html'}
             };   
         }
-        else if ('forgotten-password' === path) {
+        else if ('forgot-password' === path) {
             dict = {
                 locals: {token: req.csrfToken()},
-                partials: {main: 'src/html/forgotten-password.html'}
+                partials: {main: 'src/html/forgot-password.html'}
             };   
         }
         else if ('reset-password' === path) {
@@ -266,6 +229,11 @@ module.exports = function (app, passport, Account) {
         else if ('check-email' === path) {
             dict = {
                 partials: {main: 'src/html/check-email.html'}
+            };   
+        }
+        else if ('password-changed' === path) {
+            dict = {
+                partials: {main: 'src/html/password-changed.html'}
             };   
         }
         if(dict) {

@@ -1,5 +1,5 @@
 <h2>Please sign in</h2>
-<form action="/account" method="POST" class="form">
+<form action="/login" method="POST" class="form">
     <input type="hidden" name="_csrf" value="${token}">
     <div class="text-input">
         <input class="form-field" type="email" name="email" required>
@@ -14,7 +14,7 @@
     <input id="remember-login" class="custom-checkbox" type="checkbox" name="remember" value="1">
     <label class="custom-checkbox-label" for="remember-login"><span class="custom-checkbox-label-text">Remember me</span></label>
     <button type="submit">Log me in!</button>
-    <div class="warning">Invalid user name or password!</div>
+    <div id="login-error">Invalid user name or password!</div>
 </form>
 <div>Don't have an account! <a href="registration">Sign Up Here</a></div>
-<a href="forgotten-password">Forgot Password?</a>
+<a href="forgot-password">Forgot Password?</a>

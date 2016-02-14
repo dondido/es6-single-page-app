@@ -1,14 +1,14 @@
 import {$http} from 'js/$http.js';
-import Submitter from 'submit.js';
+import Page from 'js/page.js';
 import {$cookie} from 'js/$cookie.js';
 class Router {
   getFile(page) {
     if (page && page.file) {
       if(page.file.slice(-4) === 'html') {
-        Submitter.init(page.file + '!text');
+        new Page(page.file);
       }
       else {
-        System.import(page.file).then(m => m.init && m.init());
+        System.import(page.file).then(function(C) {new C.default()});
       }
     }
   }
@@ -29,7 +29,7 @@ class Router {
         let href = el.getAttribute('href');
         let page = Object.assign({}, this.routes[href]);
         if(page && page.file) {
-          if(page.account && !$cookie('username')) {
+          if(page.account && $cookie('username')) {
             page.file = page.account;
           }
           this.getFile(page);
@@ -44,15 +44,23 @@ class Router {
     return path === '/' ? '/' : path.replace(/\//g, '');
   }
   handleRouteChange(first) {
-    var path = location.pathname + location.search,
-      page = Object.assign({}, this.routes[this.getRoute(path)]);
+    var page;
     if(first) {
-      history.replaceState({url: path, first: 1}, document.title, path);
+      let path = location.href.split('/').slice(3).join('/');
+      history.replaceState({url: path}, document.title, path);
+    }       
+    else if(location.hash) {
+      return;
     }
+    page = Object.assign(
+      {},
+      this.routes[this.getRoute(location.pathname)]
+    );
     if(page && page.file) {
-      if(page.account && !$cookie('username')) {
+      var a = $cookie('username');
+      if(page.account && $cookie('username')) {
         page.file = page.account;
-        history.replaceState({url: '/', first: 1}, document.title, '/');
+        history.replaceState({url: '/'}, document.title, '/');
       }
       this.getFile(page);
     }
@@ -65,7 +73,6 @@ class Router {
       error = res => console.log('error', res);
     window.addEventListener('popstate', () => this.handleRouteChange());  
     document.addEventListener('click', e => this.handleClick(e));
-    this.$main = document.getElementById('main');
     $http({
       method: 'GET', 
       url: '/routes.json'

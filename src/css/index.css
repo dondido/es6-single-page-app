@@ -12,14 +12,6 @@
 .form {
     width: 300px;
 }
-.warning {
-    display: none;
-}
-.error > .warning {
-    display: block;
-    color: tomato;
-    margin-bottom: 2ex;
-}
 button {
     display: inline-block;
     border: 1px solid black;
@@ -144,4 +136,12 @@ button {
 }
 .forgot {
     line-height: 4ex;
+}
+#login-error {
+    display: none;
+}
+#login-error:target {
+    display: block;
+    color: tomato;
+    margin-bottom: 2ex;
 }

@@ -78,6 +78,11 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Configure passport
+passport.use(Account.createStrategy());
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
+
 // Important : csrf should be added after cookie and session initialization.
 // Otherwise you will get 'Error: misconfigured csrf'
 app.use(csrf());
@@ -98,10 +103,6 @@ app.use(function(req, res, next) {
 })
 
 //app.use(express.static(path.join(__dirname, 'src')));
-// Configure passport
-passport.use(Account.createStrategy());
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
 
 require(__dirname +'/app/routes')(app, passport, Account);
 app.use(express.static(__dirname + '/src'));

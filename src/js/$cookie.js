@@ -1,1 +1,1 @@
-export var $cookie = k => decodeURIComponent((document.cookie.match('(^|; )' + k + '=([^;]*)') || 0)[2]);
+export var $cookie = k => decodeURIComponent((document.cookie.match('(^|; )' + k + '=([^;]*)') || 0)[2] || '');

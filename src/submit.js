@@ -26,7 +26,6 @@ class Submitter {
     }).then(r => this.successCallback(r), r => this.errorCallback(r));
   }
   successDefault(res, success, reject) {
-    console.log(115, res)
     var data;
     try {
       data = JSON.parse(res);
@@ -60,7 +59,7 @@ class Submitter {
     }
     else {
       Router.xhr = 1;
-      this.updateListener(login);
+      this.updateListener(() => login(update));
     }
   }
 }
