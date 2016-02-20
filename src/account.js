@@ -10,5 +10,4 @@ class Account extends View {
     this.init();
   }
 }
-
 export default Account;

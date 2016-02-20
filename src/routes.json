@@ -9,17 +9,11 @@
     "reset-password": {
         "file": "reset-password"
     },
-    "password-changed": {
-        "file": "html/password-changed.html"
-    },
     "update-password": {
-        "file": "update-password",
-        "account": "html/login.html"
-    },
-    "check-email": {
-        "file": "html/check-email.html"
+        "file": "html/login.html",
+        "account": "html/update-password.html" 
     },
     "registration": {
-        "file": "register"
+        "file": "html/registration.html"
     }
 }

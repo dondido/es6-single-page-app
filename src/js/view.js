@@ -1,5 +1,6 @@
 import Router from 'router.js';
 import {$http} from 'js/$http.js';
+import {$cookie} from 'js/$cookie.js';
 var $main, $forms;
 class View {
   constructor(path, init) {
@@ -43,16 +44,24 @@ class View {
     $main.innerHTML = res;
   }
   success(res) {
+    if(!res) {
+      return;
+    }
     try{
       let data = JSON.parse(res),
         path = location.href.split('/').slice(3).join('/');
-      if(data.path.indexOf('#') === 0) {
-        return location.hash = data.path;
+      if(data.path) {
+        if(data.path.indexOf('#') === 0) {
+          return location.hash = data.path;
+        }
+        let page = Router.getPage(Router.getRoute(data.path));
+        if(page) {
+          history[data.path === location.pathname ? 'replaceState' : 'pushState'](
+            {account: $cookie('username')}, '', data.path
+          );
+          return Router.getFile(page);
+        }
       }
-      if(data.path !== path) {
-        history.pushState({url: data.path}, '', data.path);
-      }
-      Router.handleRouteChange();
     } catch(e) {
       $main.innerHTML = res;
     }

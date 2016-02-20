@@ -1,8 +1,11 @@
 import {$http} from 'js/$http.js';
 import Page from 'js/page.js';
 import {$cookie} from 'js/$cookie.js';
+var prevRoute,
+  account;
 class Router {
   getFile(page) {
+    prevRoute = page.file;
     if (page && page.file) {
       if(page.file.slice(-4) === 'html') {
         new Page(page.file);
@@ -27,13 +30,10 @@ class Router {
     do {
       if(el.nodeName === 'A') {
         let href = el.getAttribute('href');
-        let page = Object.assign({}, this.routes[href]);
-        if(page && page.file) {
-          if(page.account && $cookie('username')) {
-            page.file = page.account;
-          }
+        let page = this.getPage(href);
+        if(page) {
+          history.pushState({account: account}, page.file, href);
           this.getFile(page);
-          history.pushState({url: href}, page.file, href);
           e.preventDefault();
           return;
         }
@@ -43,24 +43,35 @@ class Router {
   getRoute(path) {
     return path === '/' ? '/' : path.replace(/\//g, '');
   }
-  handleRouteChange(first) {
-    var page;
-    if(first) {
-      let path = location.href.split('/').slice(3).join('/');
-      history.replaceState({url: path}, document.title, path);
-    }       
-    else if(location.hash) {
+  get prevRoute() {
+    return prevRoute;
+  }
+  set prevRoute(route) {
+    prevRoute = route;
+  }
+  getPage(ref) {
+    var route = this.routes[ref];
+    if(!route) {
       return;
     }
-    page = Object.assign(
-      {},
-      this.routes[this.getRoute(location.pathname)]
-    );
-    if(page && page.file) {
-      var a = $cookie('username');
-      if(page.account && $cookie('username')) {
-        page.file = page.account;
-        history.replaceState({url: '/'}, document.title, '/');
+    let page = Object.assign({}, route);
+    account = $cookie('username');
+    if(page.account && account) {
+      page.file = page.account;
+    }
+    return page;
+  }
+  handleRouteChange(e = {}) {
+    var page = this.getPage(this.getRoute(location.pathname));
+    if(page) {
+      if(e.state && e.state.account !== account) {
+        history.replaceState({account: account}, '', '/');
+      }
+      else if(!prevRoute || !e.state) {
+        history.replaceState({account: account}, '');
+      } 
+      if(prevRoute === page.file) {
+        return;
       }
       this.getFile(page);
     }
@@ -68,10 +79,10 @@ class Router {
   init() {
     var success = routes => {
         this.routes = JSON.parse(routes);
-        this.handleRouteChange(1);
+        this.handleRouteChange();
       },
       error = res => console.log('error', res);
-    window.addEventListener('popstate', () => this.handleRouteChange());  
+    window.addEventListener('popstate', (e) => this.handleRouteChange(e));  
     document.addEventListener('click', e => this.handleClick(e));
     $http({
       method: 'GET', 

@@ -137,11 +137,24 @@ button {
 .forgot {
     line-height: 4ex;
 }
+#password-update-error,
+#password-updated:target + .update-password,
+#password-updated,
+#check-email:target + .forgot-password,
+#check-email,
+#register-error,
 #login-error {
     display: none;
 }
+#password-update-error:target,
+#register-error:target,
 #login-error:target {
     display: block;
     color: tomato;
+    margin-bottom: 2ex;
+}
+#password-updated:target,
+#check-email:target {
+    display: block;
     margin-bottom: 2ex;
 }

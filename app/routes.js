@@ -12,10 +12,12 @@ var merge = require('merge'),
               user: 'gmail.user@gmail.com',
               pass: 'userpass'
           }
-    }
-
+    };
 
 module.exports = function (app, passport, Account) {
+    var redirectHash = function(req, res, path) {
+        return req.xhr ? res.json({path: path}) : res.redirect(path);
+    };
     app.engine('html', es6Renderer);
     app.set('views', 'src');
     app.set('view engine', 'html');
@@ -27,11 +29,11 @@ module.exports = function (app, passport, Account) {
         transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts
     }, emailCfg));
 
-    app.post('/register', function(req, res) {
+    app.post('/registration', function(req, res) {
         Account.register(
             new Account(
                 {
-                    username: req.body.fullname,
+                    username: decodeURIComponent(req.body.fullname),
                     email: req.body.email
                 }
             ),
@@ -39,25 +41,26 @@ module.exports = function (app, passport, Account) {
             function(err) {
                 if (err) { 
                     console.log('Error while registering user!', err); 
-                    return;
+                    return redirectHash(req, res, '#register-error');
                 }
-                passport.authenticate('local')(req, res, function() {
-                    if(req.xhr) {
-                        res.send('/');
+                passport.authenticate('local', function(err, user, info) {
+                    if (!user) {
+                        console.log('Error while loging user!', err); 
+                        return redirectHash(req, res, '#register-error');
                     }
-                    else {
-                        res.redirect('/');
-                    }
-                });
+                    req.logIn(user, function() {
+                        res.cookie('username', user.username);
+                        return redirectHash(req, res, '/');
+                    });
+                })(req, res);
             }
         );
     });
 
-    app.post('/login', function(req, res, next) {
+    app.post('/', function(req, res, next) {
         passport.authenticate('local', function(err, user, info) {
             if (!user) {
-                return req.xhr ?
-                    res.json({path: '#login-error'}) : res.redirect('#login-error');
+                return redirectHash(req, res, '#login-error');
             }
             if (!req.body.remember){
                 /* Each session has a unique cookie object accompany it. This allows
@@ -67,8 +70,16 @@ module.exports = function (app, passport, Account) {
                 again after restarting the browser. */
                 req.session.cookie.expires = false;
             }
-            res.cookie('username', user.username);
-            req.xhr ? res.json({path: '/'}) : res.redirect('back');
+            /* When built-in options are not enough for handling an authentication
+            request, a custom callback can be provided to allow the application to
+            handle success or failure. Authentication functionality is called from
+            within the route handler, rather than being used as route middleware.
+            This provides convinient callback access to the req and res objects
+            through closure. */
+            req.logIn(user, function() {
+                res.cookie('username', user.username);
+                return redirectHash(req, res, '/');
+            });
         })(req, res, next);
     });
 
@@ -81,11 +92,11 @@ module.exports = function (app, passport, Account) {
         res.clearCookie('username');
         req.logout();
         req.session.destroy();
-        req.xhr ? res.json({path: '/'}) : res.redirect('back');
+        redirectHash(req, res, '/');
     });
 
     /* Token key is generated and sent to the email address provided by the user. */
-    app.post('/forgotten', function(req, res) {
+    app.post('/forgot-password', function(req, res) {
         var setResetToken = function(err, user) {
             var sendEmail = function(model) {
                 app.mailer.send(
@@ -107,46 +118,28 @@ module.exports = function (app, passport, Account) {
             user.setToken().then(sendEmail);
         };
         Account.findByUsername(req.body.email, setResetToken);
-        res.end();
+        req.xhr ? res.end() : res.redirect('#check-email');
     });
 
     /* Once the user has received the unique token, the token value needs to be
     entered when filling in the new password form. */
-    app.post('/updatepass', function(req, res) {
+    app.post('/update-password', function(req, res) {
         var rb = req.body,
             notifyUpdate = function(err){
-                console.log(124, req.body.email, req.body._csrf);
-                if(req.xhr) {
-                    res.json({
-                        classList: {
-                            add: err ? 'error' : 'success'
-                        }
-                    });
-                }
-                else {
-                    res.render(
-                        'index', 
-                        {
-                            locals: {submitState: err ? 'error' : 'success'},
-                            partials: {main: 'src/html/check-email.html'}
-                        }
-                    );
-                }
+                redirectHash(req, res, err ? '#password-update-error' : '#password-updated');
             },
             updatePassword = function(err, user){
-                console.log(122, err, user)
+                if (err || !user) {
+                    return redirectHash(req, res, '#password-update-error');
+                }
                 user.updatePassword(rb.new_password, notifyUpdate);
-            },
-            checkPassword = function(err, user) {
-                console.log(121, err, user)
-                user.authenticate(rb.old_password, updatePassword);
             };
-        if (rb.new_password === rb.confirm_password){
-            Account.findByUsername(req.user.email, checkPassword);
+        if(rb.new_password === rb.confirm_password){
+            req.user.authenticate(rb.old_password, updatePassword);
         }
     });
 
-    app.post('/reset', function(req, res) {
+    app.post('/reset-password', function(req, res) {
         var query,
             resetToken,
             rb = req.body;
@@ -160,19 +153,12 @@ module.exports = function (app, passport, Account) {
                 }
             }
         }
-        console.log('reset', req.xhr)
-        if(req.xhr) {
-            res.end();
-        }
-        else {
-            res.redirect('password-changed');
-        }
+        req.xhr ? res.end() : res.redirect('#password-updated');
     });
 
     app.use(function(req, res, next){
         var dict,
             path = req.path === '/' ? '/' : req.path.replace(/\//g, '');
-        console.log(111, path, req.isAuthenticated())
         if('/' === path) {
             if(req.isAuthenticated()) {
                 res.cookie('username', req.user.username);
@@ -185,6 +171,7 @@ module.exports = function (app, passport, Account) {
                 };
             }
             else {
+                res.clearCookie('username');
                 dict = {
                     locals: {token: req.csrfToken()},
                     partials: {main: 'src/html/login.html'}
@@ -195,17 +182,13 @@ module.exports = function (app, passport, Account) {
             if(req.isAuthenticated()) {
                 dict = {
                     locals: {
-                        token: req.csrfToken(),
-                        submitState: ''
+                        token: req.csrfToken()
                     },
                     partials: {main: 'src/html/update-password.html'}
                 };
             }
             else {
-                dict = {
-                    locals: {token: req.csrfToken()},
-                    partials: {main: 'src/html/login.html'}
-                }
+                return res.redirect('/');
             }
         }
         else if ('registration' === path) {
@@ -224,16 +207,6 @@ module.exports = function (app, passport, Account) {
             dict = {
                 locals: {token: req.csrfToken()},
                 partials: {main: 'src/html/reset-password.html'}
-            };   
-        }
-        else if ('check-email' === path) {
-            dict = {
-                partials: {main: 'src/html/check-email.html'}
-            };   
-        }
-        else if ('password-changed' === path) {
-            dict = {
-                partials: {main: 'src/html/password-changed.html'}
             };   
         }
         if(dict) {
