@@ -8,7 +8,7 @@ class View {
       System.import(path + '!text').then(res => this.ready(res));
     }
     else {
-      $main = document.getElementById('main');
+      $main = document.querySelector('.main-content');
       $forms = $main.getElementsByTagName('form');
       this.init();
     } 

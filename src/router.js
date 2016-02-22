@@ -56,6 +56,7 @@ class Router {
     }
     let page = Object.assign({}, route);
     account = $cookie('username');
+    document.body.classList[account ? 'add' : 'remove']('account')
     if(page.account && account) {
       page.file = page.account;
     }

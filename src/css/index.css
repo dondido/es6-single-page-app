@@ -1,10 +1,16 @@
-@font-face {
-    font-family: lato;
-    src: url('Lato-Hairline.woff');
+body {
+    margin: 0;
+    font-family: 'Verdana', 'Arial'; 
 }
-* {
-    font-family: lato;
-    font-weight: 600;
+#main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2ex;
+}
+h2 {
+    font-size: 1.4em;
+    font-weight: normal;
 }
 .app-title {
     color: #5264AE;
@@ -12,10 +18,14 @@
 .form {
     width: 300px;
 }
+a {
+    color: #4CAF50;
+}
 button {
     display: inline-block;
-    border: 1px solid black;
-    background: transparent;
+    border: 0;
+    background: #333;
+    color: white;
     margin: 4ex auto;
     padding: 1.5ex 2em;
     font-size: 1em;
@@ -25,6 +35,10 @@ button {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    transition: background-color 1s ease;
+}
+button:hover {
+    background-color: #111;
 }
 .button-holder {
     text-align: center;
@@ -75,13 +89,10 @@ button {
     vertical-align: middle;
     margin-left: 1em;
 }
-.text-input {
-    position: relative;
-    margin-top: 4ex;
-}
 .form-field {
-    font-size: 1.2em;
+    font-size: 1em;
     padding: 10px 10px 10px 5px;
+    margin-top: 2ex;
     display: block;
     width: 100%;
     border: none;
@@ -91,25 +102,11 @@ button {
 .form-field:focus {
     outline: none;
 }
-.input-label {
-    color: #999;
-    position: absolute;
-    pointer-events: none;
-    left: 5px;
-    top: 10px;
-    transition: 0.2s ease all;
-    -moz-transition: 0.2s ease all;
-    -webkit-transition: 0.2s ease all;
-}
-.form-field:focus ~ .input-label,
-.form-field:valid ~ .input-label {
-    top: -20px;
-    font-size: 1em;
-    color: #5264AE;
-}
 .input-bar {
     position: relative;
     display: block;
+    overflow: hidden;
+    height: 2px;
     width: 100%;
 }
 .input-bar:before,
@@ -119,7 +116,7 @@ button {
     width: 0;
     bottom: 1px;
     position: absolute;
-    background: #5264AE;
+    background: #4CAF50;
     transition: 0.2s ease all;
     -moz-transition: 0.2s ease all;
     -webkit-transition: 0.2s ease all;
@@ -137,6 +134,8 @@ button {
 .forgot {
     line-height: 4ex;
 }
+.logged-in,
+.account .logged-out,
 #password-update-error,
 #password-updated:target + .update-password,
 #password-updated,
@@ -157,4 +156,61 @@ button {
 #check-email:target {
     display: block;
     margin-bottom: 2ex;
+}
+.header-logo-link {
+    font-size: .8em;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    color: white;
+}
+.header-content {
+    display: table;
+    width: 100%;
+}
+.header-logo {
+    width: 4.6em;
+    text-align: center;
+    background-color: #4CAF50;
+}
+@media only screen and (min-width:478px){
+    .header-logo-link {
+        font-size: 1em;
+    }
+    .header-logo {
+        width: 6em;
+    }
+}
+.navigation {
+    list-style: none;
+    background-color: #333;
+    vertical-align: middle;
+    text-align: right;
+} 
+.header-logo,
+.navigation {
+    display: table-cell;
+}
+.nav-items {
+    margin: 0;
+    padding: 0;
+}
+.nav-link {
+    display: inline-block;
+    padding: 1.4ex .8em;
+    text-decoration: none;
+    color: white;
+    transition: background-color .5s ease;
+}
+.nav-link:hover {
+    background-color: #111;
+}
+.logged-out,
+.account .logged-in {
+    display: inline-block;
+}
+.logged-in button,
+.logged-out button {
+    margin: 0;
+    padding: 1.4ex .8em;
 }

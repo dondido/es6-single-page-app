@@ -1,20 +1,14 @@
-<h2>Please sign in</h2>
+<h2>Sign in</h2>
 <form action="/" method="POST" class="form">
-    <input type="hidden" name="_csrf" value="${token}">
-    <div class="text-input">
-        <input class="form-field" type="email" name="email" required>
-        <span class="input-bar"></span>
-        <label class="input-label">Email</label>
-    </div>
-    <div class="text-input">
-        <input class="form-field" type="password" name="password" required>
-        <span class="input-bar"></span>
-        <label class="input-label">Password</label>
-    </div>
-    <input id="remember-login" class="custom-checkbox" type="checkbox" name="remember" value="1">
-    <label class="custom-checkbox-label" for="remember-login"><span class="custom-checkbox-label-text">Remember me</span></label>
-    <button type="submit">Log me in!</button>
-    <div id="login-error">Invalid user name or password!</div>
+  <input type="hidden" name="_csrf" value="${token}">
+  <input class="form-field" id="email" type="email" name="email" placeholder="Email" required>
+  <label class="input-bar" for="email">Email</label>
+  <input class="form-field" type="password" id="password" name="password" placeholder="Password" required>
+  <label class="input-bar" for="password">Password</label>
+  <input id="remember-login" class="custom-checkbox" type="checkbox" name="remember" value="1">
+  <label class="custom-checkbox-label" for="remember-login"><span class="custom-checkbox-label-text">Remember me</span></label>
+  <button type="submit">Log me in!</button>
+  <div id="login-error">Invalid user name or password!</div>
 </form>
 <div>Don't have an account! <a href="registration">Sign Up Here</a></div>
 <a href="forgot-password">Forgot Password?</a>

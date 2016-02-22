@@ -3,13 +3,34 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>SPA</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
-<body>
-    <h1 class="app-title">ES6 Single Page Application</h1>
-    <main id="main">${main}</main>
-    <script src="jspm_packages/system.js"></script>
-    <script src="config.js"></script>
-    <script>System.import('index')</script>
+<body itemscope="itemscope" itemtype="http://schema.org/WebPage">
+  <header class="header" role="banner" itemscope="itemscope" itemtype="http://schema.org/Header">
+    <div class="header-content">
+      <h1 class="header-logo" itemprop="headline">
+        <a class="header-logo-link" href="/">SPA ES6</a>
+      </h1>
+      <nav class="navigation" role="navigation" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
+        <ul class="nav-items">
+            <li class="logged-out"><a class="nav-link" href="/">Log in</a>
+            <li class="logged-out"><a class="nav-link" href="registration">Register</a>
+            <li class="logged-in"><a class="nav-link" href="update-password">Account</a>
+            <li class="logged-in">
+              <form action="/logout" method="POST">
+                <input type="hidden" name="_csrf" value="${token}">
+                <button type="submit">Logout</button>
+              </form>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <setion class="main-content">${main}</setion>
+  </main>
+  <script src="jspm_packages/system.js"></script>
+  <script src="config.js"></script>
+  <script>System.import('index')</script>
 </body>
 </html>
