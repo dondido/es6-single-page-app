@@ -1,6 +1,6 @@
 # ES6 Single Page App
 ## Synopsis
-Right now, many developers are just curious about ES6 and how it fits into a SPA. They map their knowledge about object prototypes to ES6 class syntax concepts. This project is an attempt to present ES6 single page application boilerplate without a framework.
+Right now, many developers are just curious about ES6 and how it fits into a SPA. The author recommends that they map their knowledge about object prototypes to ES6 class syntax concepts before trying to reap the benefits of modern rich web app. This project is an attempt to present ES6 single page application boilerplate without a framework.
 ## Features
 This app features best practices in the following areas:
 * Flexible single page app architecture based on ES6 rigid class inheritance hierarchies - This architecture allows extension of the traditional request response model the classic web is built upon when javascript is enabled. Only a single page is requested from the server on the initial load and all other subsequent views (similar to traditional pages) are taken in and out of view as needed. The architecture relies heavily upon ES6 module loader to pass information to and from the server to the client to merge with views that present data. This approach provides much less network activity, faster responses to user interactions and smaller server loads.
