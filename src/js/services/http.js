@@ -1,5 +1,5 @@
-import {$cookie} from 'js/$cookie.js';
-export var $http = function(data) {
+import {$cookie} from 'js/services/cookie.js';
+export const $http = function(data) {
     return new Promise(function(resolve, reject) {
         var req = new XMLHttpRequest();
         req.open(data.method, data.url || location.pathname);

@@ -1,8 +1,7 @@
-import {$http} from 'js/$http.js';
-import Page from 'js/page.js';
-import {$cookie} from 'js/$cookie.js';
-var prevRoute,
-  account;
+import {$http} from 'js/services/http.js';
+import Page from 'js/views/page.js';
+import User from 'js/models/user.js';
+var prevRoute;
 class Router {
   getFile(page) {
     prevRoute = page.file;
@@ -32,7 +31,7 @@ class Router {
         let href = el.getAttribute('href');
         let page = this.getPage(href);
         if(page) {
-          history.pushState({account: account}, page.file, href);
+          history.pushState({account: User.account}, page.file, href);
           this.getFile(page);
           e.preventDefault();
           return;
@@ -55,21 +54,21 @@ class Router {
       return;
     }
     let page = Object.assign({}, route);
-    account = $cookie('username');
-    document.body.classList[account ? 'add' : 'remove']('account')
-    if(page.account && account) {
+    if(page.account && User.account) {
       page.file = page.account;
     }
     return page;
   }
+  /* Determines the current route by mathcing current location pathname to
+  routes map, and returning the route entry with all of its properties. */
   handleRouteChange(e = {}) {
     var page = this.getPage(this.getRoute(location.pathname));
     if(page) {
-      if(e.state && e.state.account !== account) {
-        history.replaceState({account: account}, '', '/');
+      if(e.state && e.state.account !== User.account) {
+        history.replaceState({account: User.account}, '', '/');
       }
       else if(!prevRoute || !e.state) {
-        history.replaceState({account: account}, '');
+        history.replaceState({account: User.account}, '');
       } 
       if(prevRoute === page.file) {
         return;
@@ -77,9 +76,14 @@ class Router {
       this.getFile(page);
     }
   }
+  // Starts the SPA app router and processes the  view initialisation
   init() {
     var success = routes => {
         this.routes = JSON.parse(routes);
+        /* As we don't want to make an extra Ajax request to check
+        whether the user is logged in or not we set this data as
+        part of a document body classList. */
+        User.account = document.body.classList.contains('account');
         this.handleRouteChange();
       },
       error = res => console.log('error', res);
@@ -87,7 +91,7 @@ class Router {
     document.addEventListener('click', e => this.handleClick(e));
     $http({
       method: 'GET', 
-      url: '/routes.json'
+      url: 'js/config/routes.json'
     }).then(success, error);
   }
 }

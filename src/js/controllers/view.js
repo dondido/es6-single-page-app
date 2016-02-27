@@ -1,6 +1,6 @@
-import Router from 'router.js';
-import {$http} from 'js/$http.js';
-import {$cookie} from 'js/$cookie.js';
+import Router from 'js/controllers/router.js';
+import {$http} from 'js/services/http.js';
+import User from 'js/models/user.js';
 var $main, $forms;
 class View {
   constructor(path, init) {
@@ -8,6 +8,8 @@ class View {
       System.import(path + '!text').then(res => this.ready(res));
     }
     else {
+      /* Initialize and start the view. Obviously, since we here query
+      the DOM, it should have been loaded first. */
       $main = document.querySelector('.main-content');
       $forms = $main.getElementsByTagName('form');
       this.init();
@@ -48,8 +50,17 @@ class View {
       return;
     }
     try{
+      /* Based on request response, this method will determine which
+      is the right action to take. If the response is a JSON object all
+      of its properties wil be evaluated and if not it will be considered
+      as a normal html content and will be inserted into the DOM. */
       let data = JSON.parse(res),
         path = location.href.split('/').slice(3).join('/');
+      User.account = data.account;
+      document.body.classList.toggle('account', User.account);
+      /* The response returned can ask for the app to redirect the page,
+      most likely to another SPA hash bang path, but also to another url
+      via the returned path property. */
       if(data.path) {
         if(data.path.indexOf('#') === 0) {
           return location.hash = data.path;
@@ -57,7 +68,7 @@ class View {
         let page = Router.getPage(Router.getRoute(data.path));
         if(page) {
           history[data.path === location.pathname ? 'replaceState' : 'pushState'](
-            {account: $cookie('username')}, '', data.path
+            {account: User.account}, '', data.path
           );
           return Router.getFile(page);
         }

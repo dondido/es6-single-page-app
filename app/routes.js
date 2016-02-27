@@ -16,7 +16,12 @@ var merge = require('merge'),
 
 module.exports = function (app, passport, Account) {
     var redirectHash = function(req, res, path) {
-        return req.xhr ? res.json({path: path}) : res.redirect(path);
+        return req.xhr ? res.json(
+            {
+                path: path,
+                account: req.isAuthenticated() ? req.user.username : ''
+            }
+        ) : res.redirect(path);
     };
     app.engine('html', es6Renderer);
     app.set('views', 'src');
@@ -49,7 +54,6 @@ module.exports = function (app, passport, Account) {
                         return redirectHash(req, res, '#register-error');
                     }
                     req.logIn(user, function() {
-                        res.cookie('username', user.username);
                         return redirectHash(req, res, '/');
                     });
                 })(req, res);
@@ -77,7 +81,6 @@ module.exports = function (app, passport, Account) {
             This provides convinient callback access to the req and res objects
             through closure. */
             req.logIn(user, function() {
-                res.cookie('username', user.username);
                 return redirectHash(req, res, '/');
             });
         })(req, res, next);
@@ -89,7 +92,6 @@ module.exports = function (app, passport, Account) {
         logout() will remove the req.user property and clear the login session
         (if any). This however does not set req.session.cookie.expires to its
         default value so req.session.destroy needs to be invoked. */
-        res.clearCookie('username');
         req.logout();
         req.session.destroy();
         redirectHash(req, res, '/');
@@ -161,7 +163,6 @@ module.exports = function (app, passport, Account) {
             path = req.path === '/' ? '/' : req.path.replace(/\//g, '');
         if('/' === path) {
             if(req.isAuthenticated()) {
-                res.cookie('username', req.user.username);
                 dict = {
                     locals: {
                         token: req.csrfToken(),
@@ -171,7 +172,6 @@ module.exports = function (app, passport, Account) {
                 };
             }
             else {
-                res.clearCookie('username');
                 dict = {
                     locals: {token: req.csrfToken()},
                     partials: {main: 'src/html/login.html'}
@@ -210,6 +210,7 @@ module.exports = function (app, passport, Account) {
             };   
         }
         if(dict) {
+            dict.locals.account = req.isAuthenticated() ? 'account' : '';
             return res.render('index', dict);
         }
         next();

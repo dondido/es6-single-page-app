@@ -1,5 +1,5 @@
-import View from 'js/view.js';
-class ResetPassword extends View {
+import View from 'js/controllers/view.js';
+export default class ResetPassword extends View {
   constructor() {
     super('html/reset-password.html');
   }
@@ -7,5 +7,4 @@ class ResetPassword extends View {
     super.submit(e);
     location.hash = 'password-updated';
   }
-}
-export default ResetPassword;
+};
