@@ -27,4 +27,4 @@ export const $http = function(data) {
         // Make the request
         req.send(JSON.stringify(data.params));
     });
-}
+};

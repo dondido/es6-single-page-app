@@ -63,7 +63,8 @@ class View {
       via the returned path property. */
       if(data.path) {
         if(data.path.indexOf('#') === 0) {
-          return location.hash = data.path;
+          location.hash = data.path;
+          return;
         }
         let page = Router.getPage(Router.getRoute(data.path));
         if(page) {
@@ -88,7 +89,7 @@ class View {
     var onSubmit = form => {
       form.addEventListener('submit', e => this.submit(e));
     };
-    [].forEach.call($forms, onSubmit)
+    [].forEach.call($forms, onSubmit);
   }
 }
 export default View;

@@ -7,4 +7,4 @@ export default class ForgotPassword extends View {
     super.submit(e);
     location.hash = 'check-email';
   }
-};
+}

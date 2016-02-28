@@ -1,7 +1,7 @@
 var merge = require('merge'),
     path = require('path'),
     es6Renderer = require('express-es6-template-engine'),
-    /*routes = require(__dirname + '/../src/routes.json'),*/
+    /*routes = require(__dirname + '/../dist/routes.json'),*/
     exist = require(__dirname + '/../custom_modules/module-exist'),
     mailer = require('express-mailer'),
     /* Private email config file will not be available on git. This config file
@@ -24,7 +24,7 @@ module.exports = function (app, passport, Account) {
         ) : res.redirect(path);
     };
     app.engine('html', es6Renderer);
-    app.set('views', 'src');
+    app.set('views', app.get('folder'));
     app.set('view engine', 'html');
     // Initialize the data
     mailer.extend(app, merge({
@@ -160,6 +160,7 @@ module.exports = function (app, passport, Account) {
 
     app.use(function(req, res, next){
         var dict,
+            folder = app.get('folder'),
             path = req.path === '/' ? '/' : req.path.replace(/\//g, '');
         if('/' === path) {
             if(req.isAuthenticated()) {
@@ -168,14 +169,14 @@ module.exports = function (app, passport, Account) {
                         token: req.csrfToken(),
                         username: req.user.username
                     },
-                    partials: {main: 'src/html/account.html'}
+                    partials: {main: folder + '/html/account.html'}
                 };
             }
             else {
                 dict = {
                     locals: {token: req.csrfToken()},
-                    partials: {main: 'src/html/login.html'}
-                }
+                    partials: {main: folder + '/html/login.html'}
+                };
             }
         }
         else if('update-password' === path) {
@@ -184,7 +185,7 @@ module.exports = function (app, passport, Account) {
                     locals: {
                         token: req.csrfToken()
                     },
-                    partials: {main: 'src/html/update-password.html'}
+                    partials: {main: folder + '/html/update-password.html'}
                 };
             }
             else {
@@ -194,19 +195,19 @@ module.exports = function (app, passport, Account) {
         else if ('registration' === path) {
             dict = {
                 locals: {token: req.csrfToken()},
-                partials: {main: 'src/html/registration.html'}
+                partials: {main: folder + '/html/registration.html'}
             };   
         }
         else if ('forgot-password' === path) {
             dict = {
                 locals: {token: req.csrfToken()},
-                partials: {main: 'src/html/forgot-password.html'}
+                partials: {main: folder + '/html/forgot-password.html'}
             };   
         }
         else if ('reset-password' === path) {
             dict = {
                 locals: {token: req.csrfToken()},
-                partials: {main: 'src/html/reset-password.html'}
+                partials: {main: folder + '/html/reset-password.html'}
             };   
         }
         if(dict) {

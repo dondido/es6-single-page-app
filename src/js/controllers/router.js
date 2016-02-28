@@ -10,7 +10,7 @@ class Router {
         new Page(page.file);
       }
       else {
-        System.import(page.file).then(function(C) {new C.default()});
+        System.import(page.file).then(C => new C.default());
       }
     }
   }
@@ -37,7 +37,7 @@ class Router {
           return;
         }
       }
-    } while(el = el.parentNode);
+    } while(el === el.parentNode);
   }
   getRoute(path) {
     return path === '/' ? '/' : path.replace(/\//g, '');

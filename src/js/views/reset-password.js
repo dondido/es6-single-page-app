@@ -7,4 +7,4 @@ export default class ResetPassword extends View {
     super.submit(e);
     location.hash = 'password-updated';
   }
-};
+}

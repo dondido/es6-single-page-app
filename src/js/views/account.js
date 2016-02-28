@@ -9,4 +9,4 @@ export default class Account extends View {
     this.$main.innerHTML = $render(res, ['username', 'token'], [User.account, '']);
     this.init();
   }
-};
+}
