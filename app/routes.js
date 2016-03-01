@@ -1,4 +1,4 @@
-var merge = require('merge'),
+const merge = require('merge'),
     path = require('path'),
     es6Renderer = require('express-es6-template-engine'),
     /*routes = require(__dirname + '/../dist/routes.json'),*/
@@ -164,6 +164,7 @@ module.exports = function (app, passport, Account) {
             path = req.path === '/' ? '/' : req.path.replace(/\//g, '');
         if('/' === path) {
             if(req.isAuthenticated()) {
+                console.log(111, req.session, req.user)
                 dict = {
                     locals: {
                         token: req.csrfToken(),

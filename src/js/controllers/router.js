@@ -10,7 +10,7 @@ class Router {
         new Page(page.file);
       }
       else {
-        System.import(page.file).then(C => new C.default());
+        System.import('js/views/' + page.file).then(C => new C.default());
       }
     }
   }
