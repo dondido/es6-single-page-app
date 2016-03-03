@@ -57,39 +57,39 @@ mongoose.connect(uristring, function (err, res) {
                 }
             })
         );
+        // parse application/x-www-form-urlencoded
+        app.use(bodyParser.urlencoded({extended: false }));
+        // parse application/json
+        app.use(bodyParser.json());
+        app.use(cookieParser());
+        /* Secret to the session initialiser is provided, which adds a little 
+        more security for our session data. Of course you might what to use a 
+        key that is a little more secure. */
+        app.use(passport.initialize());
+        app.use(passport.session());
+        // Configure passport
+        passport.use(Account.createStrategy());
+        passport.serializeUser(Account.serializeUser());
+        passport.deserializeUser(Account.deserializeUser());
+        // Important : csrf should be added after cookie and session initialization.
+        // Otherwise you will get 'Error: misconfigured csrf'
+        app.use(csrf());
+        app.use(function(req, res, next) {
+          res.cookie('XSRF-TOKEN', req.csrfToken());
+          next();
+        });
+        // error handler for csrf tokens
+        app.use(function (err, req, res, next) {
+            //return;
+            if (err.code !== 'EBADCSRFTOKEN') {
+                return next(err);
+            }
+            // handle CSRF token errors here
+            res.status(403);
+            res.send('Session has expired or form tampered with.');
+        });
+        require(__dirname +'/app/routes')(app, passport, Account);
+        app.use(express.static(__dirname + '/' + folder));
+        http.createServer(app).listen(port);
     }
 });
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended: false }));
-// parse application/json
-app.use(bodyParser.json());
-app.use(cookieParser());
-/* Secret to the session initialiser is provided, which adds a little 
-more security for our session data. Of course you might what to use a 
-key that is a little more secure. */
-app.use(passport.initialize());
-app.use(passport.session());
-// Configure passport
-passport.use(Account.createStrategy());
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
-// Important : csrf should be added after cookie and session initialization.
-// Otherwise you will get 'Error: misconfigured csrf'
-app.use(csrf());
-app.use(function(req, res, next) {
-  res.cookie('XSRF-TOKEN', req.csrfToken());
-  next();
-});
-// error handler for csrf tokens
-app.use(function (err, req, res, next) {
-    //return;
-    if (err.code !== 'EBADCSRFTOKEN') {
-        return next(err);
-    }
-    // handle CSRF token errors here
-    res.status(403);
-    res.send('Session has expired or form tampered with.');
-});
-require(__dirname +'/app/routes')(app, passport, Account);
-app.use(express.static(__dirname + '/' + folder));
-http.createServer(app).listen(port);

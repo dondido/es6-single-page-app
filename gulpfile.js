@@ -3,9 +3,9 @@ var gulp = require('gulp'),
   size = require('gulp-size'),
   jshint = require('gulp-jshint'),
   htmlmin = require('gulp-htmlmin'),
-  jspm = require('gulp-jspm-build'),
   moreCSS = require('gulp-more-css'),
-  imageOptim = require('gulp-imageoptim');
+  imageOptim = require('gulp-imageoptim'),
+  exec = require('child_process').exec;
 gulp.task('clean', () =>
   del.sync(['./dist/**'])
 );
@@ -29,22 +29,14 @@ gulp.task('images', () =>
 );
 gulp.task('movejs', () =>
   gulp.src(
-      ['src/jspm_packages/**/*', 'src/js/**/*', 'src/*.js'],
+      ['src/jspm_packages/**/*', 'src/js/**/*', 'src/*.js', 'src/*.json'],
       {base: './src'}
     )
     .pipe(size())
     .pipe(gulp.dest('dist/'))
 );
 gulp.task('jspm', () =>
-  jspm({       
-    bundleOptions: {
-      minify: true
-    },
-    bundles: [
-      {src: 'index', dst: 'bundle.js' }
-    ]
-  })
-  .pipe(gulp.dest('dist/'))
+  exec('cd dist && jspm bundle index bundle.js --skip-source-maps --inject --minify')
 );
 gulp.task('lint', () =>
   gulp.src(['./src/js/**/*', '!./src/js/vendors/**/*'])
