@@ -45,6 +45,7 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.1.18",
     "del": "^2.2.0",
+    "gulp": "^3.9.1",
     "gulp-htmlmin": "^1.3.0",
     "gulp-imageoptim": "^1.0.3",
     "gulp-jshint": "^2.0.0",
