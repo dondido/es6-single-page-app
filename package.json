@@ -57,7 +57,7 @@
   },
   "jspm": {
     "directories": {
-      "baseURL": "src"
+      "baseURL": "dist"
     },
     "dependencies": {},
     "devDependencies": {

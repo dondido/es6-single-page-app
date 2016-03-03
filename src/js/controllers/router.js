@@ -64,7 +64,6 @@ class Router {
   handleRouteChange() {
     var page = this.getPage(this.getRoute(location.pathname));
     if(page) {
-      console.log(2221,history.state)
       if(history.state && history.state.account !== User.account) {
         history.replaceState({account: User.account}, '', '/');
       }

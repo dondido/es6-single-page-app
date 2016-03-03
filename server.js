@@ -32,7 +32,6 @@ var path = require('path'),
     Account = require(__dirname +'/app/models/account'),
     app = express();
 app.set('folder', folder);
-console.log(111, folder, process.env.NODE_ENV)
 app.use(favicon('./' + folder +'/favicon.ico'));
 // Switch off the default 'X-Powered-By: Express' header
 app.disable('x-powered-by');
@@ -41,11 +40,24 @@ app.use(compression());
 /* Makes connection asynchronously.  Mongoose will queue up database
 operations and release them when the connection is complete. */
 mongoose.connect(uristring, function (err, res) {
-  if (err) {
-  console.log ('ERROR connecting to: ' + uristring + '. ' + err);
-  } else {
-  console.log ('Succeeded connected to: ' + uristring);
-  }
+    if (err) {
+        console.log('ERROR connecting to: ' + uristring + '. ' + err);
+    } else {
+        console.log('Succeeded connected to: ' + uristring);
+        app.use(
+            session({
+                secret: process.env.SESSION_SECRET || 'secret',
+                store: new MongoStore({
+                    db: mongoose.connection.db
+                }),
+                resave: false,
+                saveUninitialized: true,
+                cookie : {
+                    maxAge : 7 * 24 * 60 * 60 * 1000 // seconds which equals 1 week
+                }
+            })
+        );
+    }
 });
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false }));
@@ -55,16 +67,6 @@ app.use(cookieParser());
 /* Secret to the session initialiser is provided, which adds a little 
 more security for our session data. Of course you might what to use a 
 key that is a little more secure. */
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || 'secret',
-        resave: false,
-        saveUninitialized: true,
-        cookie : {
-            maxAge : 7 * 24 * 60 * 60 * 1000 // seconds which equals 1 week
-        }
-    })
-);
 app.use(passport.initialize());
 app.use(passport.session());
 // Configure passport
