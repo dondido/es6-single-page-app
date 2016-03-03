@@ -32,6 +32,7 @@ var path = require('path'),
     Account = require(__dirname +'/app/models/account'),
     app = express();
 app.set('folder', folder);
+console.log(111, folder, process.env.NODE_ENV)
 app.use(favicon('./' + folder +'/favicon.ico'));
 // Switch off the default 'X-Powered-By: Express' header
 app.disable('x-powered-by');

@@ -15,16 +15,17 @@ const merge = require('merge'),
     };
 
 module.exports = function (app, passport, Account) {
-    var redirectHash = function(req, res, path) {
-        return req.xhr ? res.json(
-            {
-                path: path,
-                account: req.isAuthenticated() ? req.user.username : ''
-            }
-        ) : res.redirect(path);
-    };
+    var folder = app.get('folder'),
+        redirectHash = function(req, res, path) {
+            return req.xhr ? res.json(
+                {
+                    path: path,
+                    account: req.isAuthenticated() ? req.user.username : ''
+                }
+            ) : res.redirect(path);
+        };
     app.engine('html', es6Renderer);
-    app.set('views', app.get('folder'));
+    app.set('views', folder);
     app.set('view engine', 'html');
     // Initialize the data
     mailer.extend(app, merge({
@@ -81,9 +82,34 @@ module.exports = function (app, passport, Account) {
             This provides convinient callback access to the req and res objects
             through closure. */
             req.logIn(user, function() {
-                return redirectHash(req, res, '/');
+                req.xhr ? es6Renderer(
+                    folder + '/html/account.html',
+                    {
+                        locals: {
+                            token: '',
+                            username: req.user.username
+                        }
+                    },
+                    function(err, content) {
+                        if(!err) {
+                            res.json({
+                                path: '/',
+                                account: true,
+                                html:  content
+                            });
+                        }
+                    }
+                ) : res.redirect('/');
             });
         })(req, res, next);
+    });
+
+    app.post('/user-data', function(req, res) {
+        return res.json(
+            {
+                account: req.isAuthenticated() ? req.user.username : ''
+            }
+        );
     });
 
     app.post('/logout', function(req, res) {
@@ -94,6 +120,7 @@ module.exports = function (app, passport, Account) {
         default value so req.session.destroy needs to be invoked. */
         req.logout();
         req.session.destroy();
+        console.log('/logout')
         redirectHash(req, res, '/');
     });
 
@@ -160,11 +187,26 @@ module.exports = function (app, passport, Account) {
 
     app.use(function(req, res, next){
         var dict,
-            folder = app.get('folder'),
             path = req.path === '/' ? '/' : req.path.replace(/\//g, '');
+        if('htmlaccount.html' === path) {
+            return es6Renderer(
+                folder + '/html/account.html',
+                {
+                    locals: {
+                        token: '',
+                        username: req.user.username
+                    }
+                },
+                function(err, content) {
+                    if(!err) {
+                        res.send(content);
+                    }
+                }
+            );
+            
+        }
         if('/' === path) {
             if(req.isAuthenticated()) {
-                console.log(111, req.session, req.user)
                 dict = {
                     locals: {
                         token: req.csrfToken(),

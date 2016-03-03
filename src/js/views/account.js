@@ -3,6 +3,7 @@ import {$render} from 'js/services/render.js';
 import User from 'js/models/user.js';
 export default class Account extends View {
   constructor() {
+    console.log(111, 'account');
     super('html/account.html');
   }
   ready(res) {

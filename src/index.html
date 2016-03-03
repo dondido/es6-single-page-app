@@ -13,12 +13,15 @@
         <a class="header-logo-link" href="/">SPA ES6</a>
       </h1>
       <nav class="navigation" role="navigation" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
+        <input type="checkbox" id="navigation-checkbox">
+        <label for="navigation-checkbox" class="burger"></label>
         <ul class="nav-items">
             <li class="logged-out"><a class="nav-link" href="/">Log in</a>
             <li class="logged-out"><a class="nav-link" href="registration">Register</a>
+            <li class="logged-in"><a class="nav-link" href="/">Home</a>
             <li class="logged-in"><a class="nav-link" href="update-password">Account</a>
             <li class="logged-in">
-              <form action="/logout" method="POST">
+              <form action="/logout" method="POST" class="form">
                 <input type="hidden" name="_csrf" value="${token}">
                 <button type="submit">Logout</button>
               </form>

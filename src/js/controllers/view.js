@@ -1,17 +1,20 @@
 import Router from 'js/controllers/router.js';
 import {$http} from 'js/services/http.js';
 import User from 'js/models/user.js';
-var $main, $forms;
+var rendered,
+  $main,
+  $forms;
 class View {
   constructor(path, init) {
-    if($main) {
-      System.import(path + '!text').then(res => this.ready(res));
+    if(rendered) {
+      $http({method: 'GET', url: path}).then(res => this.ready(res));
     }
     else {
       /* Initialize and start the view. Obviously, since we here query
       the DOM, it should have been loaded first. */
+      rendered = true;
       $main = document.querySelector('.main-content');
-      $forms = $main.getElementsByTagName('form');
+      $forms = document.getElementsByClassName('form');
       this.init();
     } 
   }
@@ -59,8 +62,12 @@ class View {
       User.account = data.account;
       document.body.classList.toggle('account', User.account);
       /* The response returned can ask for the app to redirect the page,
-      most likely to another SPA hash bang path, but also to another url
+      most likely to another SPA hash path, but also to another url
       via the returned path property. */
+      if(data.html) {
+        rendered = false;
+        $main.innerHTML = data.html;
+      }
       if(data.path) {
         if(data.path.indexOf('#') === 0) {
           location.hash = data.path;
@@ -87,9 +94,13 @@ class View {
   }
   init() {
     var onSubmit = form => {
+      form.classList.remove('form');
       form.addEventListener('submit', e => this.submit(e));
     };
-    [].forEach.call($forms, onSubmit);
+    /* NodeLists are array-like but don't feature many of the methods
+    provided by the Array, like forEach. However, there is a simple
+    way to convert nodelist to array. */
+    [].slice.call($forms).forEach(onSubmit);
   }
 }
 export default View;
