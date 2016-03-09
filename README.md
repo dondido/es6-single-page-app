@@ -19,7 +19,7 @@ Flexible single page app architecture based on ES6 rigid class inheritance hiera
   Only a single page is requested from the server on the initial load and all other subsequent views (similar to traditional pages) are taken in and out of view as needed. Below is a step-by-step list of how this requests was processed:
 
 Url is entered in the browser.
-The request reaches the server and was passed to a Node.js application.
-Node.js passed the request to React, which fetched the article’s data from CouchDB, built the full page, and returned it to Node.js.
-The user will see the response in HTML, while the browser downloads the React application (/build/bundle.js) asynchronously.
-Here is the trick: this same request is processed differently if instead of entering the article in the address bar and hitting Enter, we navigate to the list of articles and then click on the article’s link. 
+The request reaches the server and is passed to a NodeJS application.
+Node.js passes the request to ExpressJS, which fetches the data from MongoDB, uses template engine to build the page, and returnes it to NodeJS.
+The user will see the response in HTML, while the browser downloads the rest of the application asynchronously.
+Here is the catch: this same request is processed differently if instead of entering the page in the address bar, we navigate to a page and then click on another page link. 
