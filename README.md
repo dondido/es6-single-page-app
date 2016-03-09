@@ -19,7 +19,7 @@ Flexible single page app architecture based on ES6 rigid class inheritance hiera
   Only a single page is requested from the server on the initial load and all other subsequent views (similar to traditional pages) are taken in and out of view as needed. Below is a step-by-step list of how this requests was processed:
 
 Url is entered in the browser.
-The request reaches the server and is passed to a NodeJS application.
-Node.js passes the request to ExpressJS, which fetches the data from MongoDB, uses template engine to build the page, and returnes it to NodeJS.
-The user will see the response in HTML, while the browser downloads the rest of the application asynchronously.
-Here is the catch: this same request is processed differently if instead of entering the page in the address bar, we navigate to a page and then click on another page link. 
+The request reaches the server and is passed to a ExpressJS application, which fetches data from MongoDB, uses template engine to build the page, and returns it.
+The user sees the response in HTML, while the browser downloads the rest of the application asynchronously.
+Here is the catch: this same request is processed differently if instead of entering the page in the address bar, we navigate to a page and then click on another page link. Now that we have the first page loaded in the browser, we navigate to another one by clicking a link. Javascript intercepts the click event and stops its propagation by preventing the default behaviour.
+A XMLHttpRequest is made to ExpressJS to fetch the requested view and returned either as a template string or part of JSON object and proceesed by the client side.
