@@ -12,7 +12,7 @@ Now that we have the first page loaded in the browser, we navigate to another on
 
 1. ES6 class inheritance
 
-Flexible single page app architecture based on ES6 rigid class inheritance hierarchies allows extension of the traditional request response model the classic web is built upon. Single Page architecture built upon ES6 class inheritance enables createtion of new classes that reuse, extend, and modify the behavior that is defined in other classes. The architecture also relies heavily upon ES6 module loader to pass information to and from the server to the client to merge with views that present data. This approach provides much less network activity, faster responses to user interactions and smaller server loads.
+  Flexible single page app architecture based on ES6 rigid class inheritance hierarchies allows extension of the traditional request response model the classic web is built upon. Single Page architecture built upon ES6 class inheritance enables createtion of new classes that reuse, extend, and modify the behavior that is defined in other classes. The architecture also relies heavily upon ES6 module loader to pass information to and from the server to the client to merge with views that present data. This approach provides much less network activity, faster responses to user interactions and smaller server loads.
 
 2. Secure token based authentication
 
