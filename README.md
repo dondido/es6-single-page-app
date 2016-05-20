@@ -23,3 +23,14 @@ Now that we have the first page loaded in the browser, we navigate to another on
   The process described above illustrates concept of isomorphic application which is usually sold as a high performance solution for loading time in single page applications. It allows the same logic to applied both in the server and the client and gracefully extends SPA concept. A SPA that does not render on the server (isn’t isomorphic) doesn’t just degrade when javascript doesn’t work, it’s totally broken. This leads us to the conclusion that isomorphic javascript is just progressive enhancement done the proper way. We always serve up a usable page with core level functionality, while progressively enhancing with javascript. Search crawler receives the full page as well as a regular user. The whole state of the application is restored from URL.
   Only a single page is requested from the server on the initial load and all other subsequent views (similar to traditional pages) are taken in and out of view as needed. Below is a step-by-step list of how this requests was processed:
 
+## Prerequisites
+
+* MongoDB - Download and Install [MongoDB](http://www.mongodb.org/downloads) - Since this project is scaffolded with mongoose, we need mongoDB to be installed and have the `mongod` process running.
+
+## Installation
+
+Once you have forked this project, go ahead and use npm through the command line to install all required dependecies:
+
+```js
+npm install
+```
