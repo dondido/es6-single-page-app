@@ -87,7 +87,7 @@ class Router {
         this.handleRouteChange();
       },
       error = res => console.log('error', res);
-    window.addEventListener('popstate', (e) => this.handleRouteChange(e));  
+    window.addEventListener('popstate', e => this.handleRouteChange(e));  
     document.addEventListener('click', e => this.handleClick(e));
     $http({
       method: 'GET', 
