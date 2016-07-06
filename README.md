@@ -34,3 +34,8 @@ Once you have forked this project, go ahead and use npm through the command line
 ```js
 npm install
 ```
+Next we use jspm to install Babel transpilation in the browser and in builds. To do this we enter /src folder and execute the following:
+
+```js
+jspm install
+```
